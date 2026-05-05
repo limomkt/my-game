@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
+    <title>教学风格罗盘 · 预见未来的你</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(160deg, #e8eef8 0%, #f2eaf7 100%);
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-radius: 44px;
+            box-shadow: 0 30px 60px rgba(20, 36, 70, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding: 30px 22px 34px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 阶段指示器 */
+        .stage-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .stage-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cdd6e8;
+            transition: all 0.4s ease;
+        }
+        .stage-dot.active {
+            background: #4f6eb1;
+            box-shadow: 0 0 0 6px rgba(79, 110, 177, 0.18);
+            transform: scale(1.2);
+        }
+        .stage-dot.done {
+            background: #8699c4;
+        }
+        .stage-label {
+            font-size: 12px;
+            color: #6b7c9a;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* 倒计时显示 */
+        .countdown-area {
+            text-align: center;
+            margin-bottom: 14px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .countdown-number {
+            font-size: 26px;
+            font-weight: 800;
+            color: #3e4e74;
+            background: #eef3fe;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1s infinite;
+        }
+        .countdown-number.urgent {
+            color: #c94b5d;
+            background: #ffeef1;
+            animation: pulseUrgent 0.6s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes pulseUrgent {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.13); }
+        }
+
+        .title {
+            font-size: 27px;
+            font-weight: 750;
+            color: #1b2b4b;
+            text-align: center;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #566a8c;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 8px 0 12px;
+        }
+
+        .style-card {
+            background: white;
+            border-radius: 24px;
+            padding: 18px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2.5px solid transparent;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            position: relative;
+        }
+        .style-card:active {
+            transform: scale(0.96);
+            background: #f5f8ff;
+        }
+        .style-card.selected {
+            border-color: #526fac;
+            background: #f0f4ff;
+            transform: scale(1.02);
+            box-shadow: 0 14px 26px rgba(55, 76, 140, 0.14);
+        }
+        .animal-emoji {
+            font-size: 40px;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+        .trait-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #253654;
+            letter-spacing: 0.4px;
+        }
+
+        .btn-generate {
+            width: 100%;
+            background: linear-gradient(135deg, #506eaa, #3d487b);
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 40px;
+            margin-top: 18px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 12px 24px rgba(47, 57, 115, 0.26);
+            transition: 0.25s;
+        }
+        .btn-generate:active {
+            transform: scale(0.96);
+            background: linear-gradient(135deg, #415c92, #2f3562);
+        }
+        .btn-generate:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            background: #9aa6c2;
+            box-shadow: none;
+        }
+
+        /* 结果卡片区域 */
+        .result-area {
+            display: none;
+            margin-top: 12px;
+        }
+        .preview-card {
+            background: white;
+            border-radius: 32px;
+            padding: 26px 18px 22px;
+            text-align: center;
+            box-shadow: 0 22px 42px rgba(42, 54, 100, 0.16);
+            background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+            border: 1px solid rgba(195, 211, 242, 0.5);
+            position: relative;
+        }
+        .card-emoji-big {
+            font-size: 76px;
+            margin-bottom: 4px;
+        }
+        .card-name {
+            font-size: 23px;
+            font-weight: 800;
+            color: #1e2e4f;
+            margin-bottom: 4px;
+        }
+        .card-nickname {
+            font-size: 13px;
+            color: #5c6e8c;
+            margin-bottom: 14px;
+            background: #f0f5fe;
+            display: inline-block;
+            padding: 3px 18px;
+            border-radius: 24px;
+        }
+        .card-desc {
+            font-size: 16px;
+            color: #2b3b5b;
+            line-height: 1.6;
+            font-weight: 500;
+            margin: 14px 0 10px;
+            padding: 0 6px;
+        }
+        .card-journey {
+            font-size: 12px;
+            color: #7b89a2;
+            margin-top: 10px;
+            background: #f7f9fe;
+            border-radius: 18px;
+            padding: 6px 14px;
+            display: inline-block;
+        }
+        .card-footer {
+            font-size: 12px;
+            color: #8493ad;
+            border-top: 1px dashed #d7dfef;
+            padding-top: 12px;
+            margin-top: 10px;
+        }
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .btn-save, .btn-reset {
+            flex: 1;
+            border-radius: 34px;
+            padding: 13px 0;
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-save {
+            background: #edf3ff;
+            color: #324a73;
+            border: 1px solid #cad6f0;
+        }
+        .btn-reset {
+            background: #f5f0fa;
+            color: #4b3a5c;
+            border: 1px solid #d4c8e3;
+        }
+        .btn-save:active, .btn-reset:active {
+            transform: scale(0.95);
+        }
+        .tip {
+            font-size: 12.5px;
+            color: #7a87a0;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="appContainer">
+        <!-- 阶段指示器 -->
+        <div class="stage-indicator" id="stageIndicator">
+            <span class="stage-dot active" id="dot1"></span>
+            <span class="stage-dot" id="dot2"></span>
+        </div>
+        <div class="stage-label" id="stageLabel">第一阶段 · 选择你最心动的特质</div>
+
+        <!-- 倒计时 -->
+        <div class="countdown-area" id="countdownArea">
+            <span class="countdown-number" id="countdownNumber">15</span>
+        </div>
+
+        <!-- 标题 -->
+        <div class="title">✨ 教学风格罗盘</div>
+        <div class="subtitle">预见未来的你<br>请凭直觉，快速选择</div>
+
+        <!-- 风格卡片网格 -->
+        <div class="grid" id="styleGrid"></div>
+
+        <!-- 生成按钮（第二阶段才显示） -->
+        <button class="btn-generate hidden" id="generateBtn">🔮 生成我的预判卡</button>
+        <div class="tip" id="bottomTip">⏳ 请在倒计时结束前做出选择</div>
+
+        <!-- 结果区域（初始隐藏） -->
+        <div class="result-area" id="resultArea">
+            <div class="preview-card" id="captureCard">
+                <div class="card-emoji-big" id="cardEmoji"></div>
+                <div class="card-name" id="cardTrait"></div>
+                <div class="card-nickname" id="cardNickname"></div>
+                <div class="card-desc" id="cardDesc"></div>
+                <div class="card-journey" id="cardJourney"></div>
+                <div class="card-footer">「教学风格罗盘」· 成长是一场提前的遇见</div>
+            </div>
+            <div class="btn-row">
+                <button class="btn-save" id="saveBtn">📸 保存图片</button>
+                <button class="btn-reset" id="resetBtn">🔄 重新开始</button>
+            </div>
+            <div class="tip">保存图片后分享给身边的人，一起预见未来 🌟</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 第一批
+            const batch1 = [
+                { trait: '逻辑严密', animal: '🦉', desc: '你或许会成长为一名课程架构大师，你的课堂将如精密仪器，环环相扣。' },
+                { trait: '激情澎湃', animal: '🦁', desc: '你或许会成长为一名课堂气氛点燃者，用热情感染每一个求知的心灵。' },
+                { trait: '幽默风趣', animal: '🐒', desc: '你或许会成长为一名课堂气氛魔法师，让知识在欢笑中悄然扎根。' },
+                { trait: '温柔耐心', animal: '🐨', desc: '你或许会成长为一名学生信赖的倾听者，用春风化雨的方式滋润成长。' }
+            ];
+            // 第二批
+            const batch2 = [
+                { trait: '技术达人', animal: '🐬', desc: '你或许会成长为一名智慧教学先行者，用科技为教育插上翅膀。' },
+                { trait: '案例大王', animal: '🐘', desc: '你或许会成长为一名故事收藏家，让每一个理论在实践中绽放光彩。' },
+                { trait: '思辨导师', animal: '🦊', desc: '你或许会成长为一名思维教练，带领学生领略逻辑与批判的力量。' },
+                { trait: '跨界玩家', animal: '🐙', desc: '你或许会成长为一名知识融合者，打破学科的壁垒，创造无限可能。' }
+            ];
+
+            const fullStyleMap = {};
+            [...batch1, ...batch2].forEach(s => { fullStyleMap[s.trait] = s; });
+
+            const styleGrid = document.getElementById('styleGrid');
+            const generateBtn = document.getElementById('generateBtn');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const stageLabel = document.getElementById('stageLabel');
+            const bottomTip = document.getElementById('bottomTip');
+            const dot1 = document.getElementById('dot1');
+            const dot2 = document.getElementById('dot2');
+            const resultArea = document.getElementById('resultArea');
+            const cardEmoji = document.getElementById('cardEmoji');
+            const cardTrait = document.getElementById('cardTrait');
+            const cardNickname = document.getElementById('cardNickname');
+            const cardDesc = document.getElementById('cardDesc');
+            const cardJourney = document.getElementById('cardJourney');
+            const saveBtn = document.getElementById('saveBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const captureCard = document.getElementById('captureCard');
+
+            let currentStage = 1;
+            let selectedBatch1 = null;
+            let selectedBatch2 = null;
+            let countdownTimer = null;
+            let timeLeft = 15;
+            let isSelecting = true;
+
+            function renderBatch(batchData) {
+                styleGrid.innerHTML = '';
+                batchData.forEach(style => {
+                    const card = document.createElement('div');
+                    card.className = 'style-card';
+                    card.setAttribute('data-trait', style.trait);
+                    card.innerHTML = `<span class="animal-emoji">${style.animal}</span><span class="trait-name">${style.trait}</span>`;
+                    card.addEventListener('click', () => handleCardClick(style, card));
+                    styleGrid.appendChild(card);
+                });
+            }
+
+            function highlightSelectedCard(trait) {
+                document.querySelectorAll('.style-card').forEach(card => {
+                    card.classList.toggle('selected', card.getAttribute('data-trait') === trait);
+                });
+            }
+
+            function startCountdown() {
+                timeLeft = 15;
+                countdownNumber.textContent = timeLeft;
+                countdownNumber.classList.remove('urgent');
+                countdownTimer = setInterval(() => {
+                    timeLeft--;
+                    countdownNumber.textContent = timeLeft;
+                    if (timeLeft <= 5) countdownNumber.classList.add('urgent');
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownTimer);
+                        countdownTimer = null;
+                        handleTimeout();
+                    }
+                }, 1000);
+            }
+
+            function handleTimeout() {
+                if (currentStage === 1 && !selectedBatch1) {
+                    const autoPick = batch1[Math.floor(Math.random() * batch1.length)];
+                    selectedBatch1 = autoPick;
+                    highlightSelectedCard(autoPick.trait);
+                    setTimeout(() => advanceToStage2(), 400);
+                } else if (currentStage === 2 && !selectedBatch2) {
+                    const autoPick = batch2[Math.floor(Math.random() * batch2.length)];
+                    selectedBatch2 = autoPick;
+                    highlightSelectedCard(autoPick.trait);
+                    setTimeout(() => showGenerateButton(), 400);
+                }
+            }
+
+            function handleCardClick(style, cardElement) {
+                if (!isSelecting) return;
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+                highlightSelectedCard(style.trait);
+                if (currentStage === 1) {
+                    selectedBatch1 = style;
+                    isSelecting = false;
+                    setTimeout(() => advanceToStage2(), 500);
+                } else if (currentStage === 2) {
+                    selectedBatch2 = style;
+                    isSelecting = false;
+                    setTimeout(() => showGenerateButton(), 500);
+                }
+            }
+
+            function advanceToStage2() {
+                currentStage = 2;
+                isSelecting = true;
+                dot1.classList.remove('active');
+                dot1.classList.add('done');
+                dot2.classList.add('active');
+                stageLabel.textContent = '第二阶段 · 再次选择你的特质';
+                bottomTip.textContent = '⏳ 请在倒计时结束前做出选择';
+                renderBatch(batch2);
+                if (countdownTimer) clearInterval(countdownTimer);
+                startCountdown();
+                generateBtn.classList.add('hidden');
+            }
+
+            function showGenerateButton() {
+                isSelecting = false;
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+                countdownNumber.textContent = '✓';
+                countdownNumber.classList.remove('urgent');
+                bottomTip.textContent = '✨ 两次选择完成，点击下方按钮生成预判卡';
+                generateBtn.classList.remove('hidden');
+                dot2.classList.remove('active');
+                dot2.classList.add('done');
+                stageLabel.textContent = '选择完成 · 即将揭晓';
+            }
+
+            function generateResult() {
+                if (!selectedBatch1 || !selectedBatch2) return;
+                const journeyText = `第一阶段：${selectedBatch1.animal} ${selectedBatch1.trait}  →  第二阶段：${selectedBatch2.animal} ${selectedBatch2.trait}`;
+                const finalStyle = selectedBatch2;
+                cardEmoji.textContent = finalStyle.animal;
+                cardTrait.textContent = finalStyle.trait;
+                cardDesc.textContent = finalStyle.desc;
+                cardJourney.textContent = journeyText;
+                cardNickname.textContent = '一位未来的好老师';
+                cardNickname.classList.remove('hidden');
+                document.querySelectorAll('#styleGrid, #generateBtn, #countdownArea, #stageLabel, #bottomTip').forEach(el => {
+                    if (el) el.style.display = 'none';
+                });
+                document.getElementById('stageIndicator').style.display = 'none';
+                resultArea.style.display = 'block';
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            generateBtn.addEventListener('click', generateResult);
+
+            saveBtn.addEventListener('click', async () => {
+                if (!captureCard) return;
+                try {
+                    saveBtn.textContent = '⏳ 生成中...';
+                    saveBtn.disabled = true;
+                    const canvas = await html2canvas(captureCard, {
+                        scale: 2.2,
+                        backgroundColor: '#ffffff',
+                        allowTaint: false,
+                        useCORS: true,
+                        logging: false,
+                    });
+                    const link = document.createElement('a');
+                    link.download = `教学风格罗盘_${selectedBatch2?.trait || '预见'}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    saveBtn.textContent = '📸 保存图片';
+                    saveBtn.disabled = false;
+                } catch (error) {
+                    alert('生成图片失败，请长按卡片截图保存。');
+                    saveBtn.textContent = '📸 保存图片';
+                    saveBtn.disabled = false;
+                }
+            });
+
+            resetBtn.addEventListener('click', resetAll);
+
+            function resetAll() {
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+                currentStage = 1;
+                selectedBatch1 = null;
+                selectedBatch2 = null;
+                isSelecting = true;
+                timeLeft = 15;
+                dot1.classList.add('active');
+                dot1.classList.remove('done');
+                dot2.classList.remove('active', 'done');
+                stageLabel.textContent = '第一阶段 · 选择你最心动的特质';
+                countdownNumber.textContent = '15';
+                countdownNumber.classList.remove('urgent');
+                bottomTip.textContent = '⏳ 请在倒计时结束前做出选择';
+                generateBtn.classList.add('hidden');
+                resultArea.style.display = 'none';
+                document.querySelectorAll('#styleGrid, #countdownArea, #stageLabel, #bottomTip').forEach(el => {
+                    if (el) el.style.display = '';
+                });
+                document.getElementById('stageIndicator').style.display = 'flex';
+                renderBatch(batch1);
+                startCountdown();
+            }
+
+            function init() {
+                renderBatch(batch1);
+                startCountdown();
+                generateBtn.classList.add('hidden');
+                resultArea.style.display = 'none';
+            }
+            init();
+        })();
+    </script>
+</body>
+</html>
