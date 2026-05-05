@@ -2,312 +2,106 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>教学风格罗盘 · 预见未来的你</title>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(160deg, #e8eef8 0%, #f2eaf7 100%);
-            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px;
-            margin: 0;
         }
-
         .container {
             width: 100%;
             max-width: 480px;
-            background: rgba(255, 255, 255, 0.78);
+            background: rgba(255,255,255,0.78);
             backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
             border-radius: 44px;
-            box-shadow: 0 30px 60px rgba(20, 36, 70, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 30px 60px rgba(20,36,70,0.1);
             padding: 30px 22px 34px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
-
-        .stage-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .stage-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #cdd6e8;
-            transition: all 0.4s ease;
-        }
-        .stage-dot.active {
-            background: #4f6eb1;
-            box-shadow: 0 0 0 6px rgba(79, 110, 177, 0.18);
-            transform: scale(1.2);
-        }
-        .stage-dot.done {
-            background: #8699c4;
-        }
-        .stage-label {
-            font-size: 12px;
-            color: #6b7c9a;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        .countdown-area {
-            text-align: center;
-            margin-bottom: 14px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .stage-indicator { display: flex; justify-content: center; gap: 10px; margin-bottom: 8px; }
+        .stage-dot { width: 12px; height: 12px; border-radius: 50%; background: #cdd6e8; transition: all 0.4s; }
+        .stage-dot.active { background: #4f6eb1; box-shadow: 0 0 0 6px rgba(79,110,177,0.18); transform: scale(1.2); }
+        .stage-dot.done { background: #8699c4; }
+        .stage-label { font-size: 12px; color: #6b7c9a; text-align: center; margin-bottom: 6px; font-weight: 600; }
+        .countdown-area { text-align: center; margin-bottom: 14px; height: 32px; display: flex; align-items: center; justify-content: center; }
         .countdown-number {
-            font-size: 26px;
-            font-weight: 800;
-            color: #3e4e74;
-            background: #eef3fe;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 26px; font-weight: 800; color: #3e4e74;
+            background: #eef3fe; border-radius: 50%; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
             animation: pulse 1s infinite;
         }
-        .countdown-number.urgent {
-            color: #c94b5d;
-            background: #ffeef1;
-            animation: pulseUrgent 0.6s infinite;
-        }
+        .countdown-number.urgent { color: #c94b5d; background: #ffeef1; animation: pulseUrgent 0.6s infinite; }
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
+            0%,100% { transform: scale(1); }
             50% { transform: scale(1.08); }
         }
         @keyframes pulseUrgent {
-            0%, 100% { transform: scale(1); }
+            0%,100% { transform: scale(1); }
             50% { transform: scale(1.13); }
         }
-
-        .title {
-            font-size: 27px;
-            font-weight: 750;
-            color: #1b2b4b;
-            text-align: center;
-            letter-spacing: 0.8px;
-            margin-bottom: 4px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #566a8c;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 22px;
-            line-height: 1.5;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 8px 0 12px;
-        }
-
+        .title { font-size: 27px; font-weight: 750; color: #1b2b4b; text-align: center; margin-bottom: 4px; }
+        .subtitle { text-align: center; color: #566a8c; font-size: 14px; margin-bottom: 22px; line-height: 1.5; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 12px; }
         .style-card {
-            background: white;
-            border-radius: 24px;
-            padding: 18px 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: 2.5px solid transparent;
-            -webkit-tap-highlight-color: transparent;
+            background: white; border-radius: 24px; padding: 18px 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.04); cursor: pointer;
+            border: 2.5px solid transparent; transition: all 0.2s;
             user-select: none;
-            position: relative;
         }
-        .style-card:active {
-            transform: scale(0.96);
-            background: #f5f8ff;
-        }
+        .style-card:active { transform: scale(0.96); background: #f5f8ff; }
         .style-card.selected {
-            border-color: #526fac;
-            background: #f0f4ff;
-            transform: scale(1.02);
-            box-shadow: 0 14px 26px rgba(55, 76, 140, 0.14);
+            border-color: #526fac; background: #f0f4ff;
+            transform: scale(1.02); box-shadow: 0 14px 26px rgba(55,76,140,0.14);
         }
-        .animal-emoji {
-            font-size: 40px;
-            margin-bottom: 6px;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-        }
-        .trait-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: #253654;
-            letter-spacing: 0.4px;
-        }
-
+        .animal-emoji { font-size: 40px; margin-bottom: 6px; }
+        .trait-name { font-size: 15px; font-weight: 700; color: #253654; }
         .btn-generate {
-            width: 100%;
-            background: linear-gradient(135deg, #506eaa, #3d487b);
-            color: white;
-            font-size: 17px;
-            font-weight: 700;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 40px;
-            margin-top: 18px;
-            cursor: pointer;
-            letter-spacing: 1px;
-            box-shadow: 0 12px 24px rgba(47, 57, 115, 0.26);
-            transition: 0.25s;
+            width: 100%; background: linear-gradient(135deg, #506eaa, #3d487b);
+            color: white; font-size: 17px; font-weight: 700; border: none;
+            padding: 15px; border-radius: 40px; margin-top: 18px; cursor: pointer;
+            box-shadow: 0 12px 24px rgba(47,57,115,0.26); transition: 0.25s;
         }
-        .btn-generate:active {
-            transform: scale(0.96);
-            background: linear-gradient(135deg, #415c92, #2f3562);
-        }
-        .btn-generate:disabled {
-            opacity: 0.4;
-            pointer-events: none;
-            background: #9aa6c2;
-            box-shadow: none;
-        }
-
-        .result-area {
-            display: none;
-            margin-top: 12px;
-        }
+        .btn-generate:active { transform: scale(0.96); }
+        .btn-generate:disabled { opacity: 0.4; pointer-events: none; background: #9aa6c2; box-shadow: none; }
+        .result-area { display: none; margin-top: 12px; }
         .preview-card {
-            background: white;
-            border-radius: 32px;
-            padding: 26px 18px 22px;
-            text-align: center;
-            box-shadow: 0 22px 42px rgba(42, 54, 100, 0.16);
+            background: white; border-radius: 32px; padding: 26px 18px 22px; text-align: center;
+            box-shadow: 0 22px 42px rgba(42,54,100,0.16);
             background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
-            border: 1px solid rgba(195, 211, 242, 0.5);
-            position: relative;
+            border: 1px solid rgba(195,211,242,0.5);
         }
-        .card-fusion {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .card-fusion-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-        .card-fusion-emoji {
-            font-size: 50px;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-        }
-        .card-fusion-trait {
-            font-size: 17px;
-            font-weight: 800;
-            color: #1e2e4f;
-        }
-        .card-fusion-x {
-            font-size: 28px;
-            font-weight: 800;
-            color: #8899c0;
-            margin: 0 4px;
-        }
-        .card-name {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1e2e4f;
-            margin-bottom: 4px;
-        }
+        .card-fusion { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .card-fusion-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .card-fusion-emoji { font-size: 50px; }
+        .card-fusion-trait { font-size: 17px; font-weight: 800; color: #1e2e4f; }
+        .card-fusion-x { font-size: 28px; font-weight: 800; color: #8899c0; margin: 0 4px; }
         .card-nickname {
-            font-size: 13px;
-            color: #5c6e8c;
-            margin-bottom: 14px;
-            background: #f0f5fe;
-            display: inline-block;
-            padding: 3px 18px;
-            border-radius: 24px;
+            font-size: 13px; color: #5c6e8c; margin-bottom: 14px;
+            background: #f0f5fe; display: inline-block; padding: 3px 18px; border-radius: 24px;
         }
-        .card-desc {
-            font-size: 16px;
-            color: #2b3b5b;
-            line-height: 1.6;
-            font-weight: 500;
-            margin: 14px 0 10px;
-            padding: 0 6px;
-        }
+        .card-desc { font-size: 16px; color: #2b3b5b; line-height: 1.6; font-weight: 500; margin: 14px 0 10px; padding: 0 6px; }
         .card-journey {
-            font-size: 11px;
-            color: #7b89a2;
-            margin-top: 10px;
-            background: #f7f9fe;
-            border-radius: 18px;
-            padding: 6px 14px;
-            display: inline-block;
-            line-height: 1.5;
+            font-size: 11px; color: #7b89a2; margin-top: 10px;
+            background: #f7f9fe; border-radius: 18px; padding: 6px 14px; display: inline-block;
         }
-        .card-footer {
-            font-size: 12px;
-            color: #8493ad;
-            border-top: 1px dashed #d7dfef;
-            padding-top: 12px;
-            margin-top: 10px;
-        }
-        .btn-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 18px;
-        }
+        .card-footer { font-size: 12px; color: #8493ad; border-top: 1px dashed #d7dfef; padding-top: 12px; margin-top: 10px; }
+        .btn-row { display: flex; gap: 12px; margin-top: 18px; }
         .btn-save, .btn-reset {
-            flex: 1;
-            border-radius: 34px;
-            padding: 13px 0;
-            font-weight: 700;
-            font-size: 15px;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
+            flex: 1; border-radius: 34px; padding: 13px 0; font-weight: 700;
+            font-size: 15px; border: none; cursor: pointer;
         }
-        .btn-save {
-            background: #edf3ff;
-            color: #324a73;
-            border: 1px solid #cad6f0;
-        }
-        .btn-reset {
-            background: #f5f0fa;
-            color: #4b3a5c;
-            border: 1px solid #d4c8e3;
-        }
-        .btn-save:active, .btn-reset:active {
-            transform: scale(0.95);
-        }
-        .tip {
-            font-size: 12.5px;
-            color: #7a87a0;
-            margin-top: 12px;
-            text-align: center;
-        }
-        .hidden {
-            display: none !important;
-        }
+        .btn-save { background: #edf3ff; color: #324a73; border: 1px solid #cad6f0; }
+        .btn-reset { background: #f5f0fa; color: #4b3a5c; border: 1px solid #d4c8e3; }
+        .btn-save:active, .btn-reset:active { transform: scale(0.95); }
+        .tip { font-size: 12.5px; color: #7a87a0; margin-top: 12px; text-align: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -320,20 +114,16 @@
         <div class="countdown-area" id="countdownArea">
             <span class="countdown-number" id="countdownNumber">15</span>
         </div>
-
         <div class="title">✨ 教学风格罗盘</div>
         <div class="subtitle">预见未来的你<br>请凭直觉，快速选择</div>
-
         <div class="grid" id="styleGrid"></div>
-
         <button class="btn-generate hidden" id="generateBtn">🔮 生成我的预判卡</button>
         <div class="tip" id="bottomTip">⏳ 请在倒计时结束前做出选择</div>
 
         <div class="result-area" id="resultArea">
             <div class="preview-card" id="captureCard">
-                <!-- 融合展示区：两个阶段的选择平等展现 -->
                 <div class="card-fusion" id="cardFusion"></div>
-                <div class="card-nickname" id="cardNickname"></div>
+                <div class="card-nickname" id="cardNickname">一位未来的好老师</div>
                 <div class="card-desc" id="cardDesc"></div>
                 <div class="card-journey" id="cardJourney"></div>
                 <div class="card-footer">「教学风格罗盘」· 成长是一场提前的遇见</div>
@@ -346,24 +136,56 @@
         </div>
     </div>
 
+    <!-- 加载 html2canvas，备用CDN -->
     <script>
-        (function() {
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+        script.onerror = function() {
+            alert('html2canvas 加载失败，请检查网络连接。');
+        };
+        document.head.appendChild(script);
+    </script>
+    <script>
+        window.addEventListener('load', function() {
+            // 主逻辑必须在 html2canvas 加载完成后执行
+            if (typeof html2canvas === 'undefined') {
+                alert('必要的绘图库加载失败，请刷新重试或使用现代浏览器（Chrome/Safari）');
+                return;
+            }
+
             const batch1 = [
-                { trait: '逻辑严密', animal: '🦉', desc: '你或许会成长为一名课程架构大师，你的课堂将如精密仪器，环环相扣。' },
-                { trait: '激情澎湃', animal: '🦁', desc: '你或许会成长为一名课堂气氛点燃者，用热情感染每一个求知的心灵。' },
-                { trait: '幽默风趣', animal: '🐒', desc: '你或许会成长为一名课堂气氛魔法师，让知识在欢笑中悄然扎根。' },
-                { trait: '温柔耐心', animal: '🐨', desc: '你或许会成长为一名学生信赖的倾听者，用春风化雨的方式滋润成长。' }
+                { trait: '逻辑严密', animal: '🦉' },
+                { trait: '激情澎湃', animal: '🦁' },
+                { trait: '幽默风趣', animal: '🐒' },
+                { trait: '温柔耐心', animal: '🐨' }
             ];
             const batch2 = [
-                { trait: '技术达人', animal: '🐬', desc: '你或许会成长为一名智慧教学先行者，用科技为教育插上翅膀。' },
-                { trait: '案例大王', animal: '🐘', desc: '你或许会成长为一名故事收藏家，让每一个理论在实践中绽放光彩。' },
-                { trait: '思辨导师', animal: '🦊', desc: '你或许会成长为一名思维教练，带领学生领略逻辑与批判的力量。' },
-                { trait: '跨界玩家', animal: '🐙', desc: '你或许会成长为一名知识融合者，打破学科的壁垒，创造无限可能。' }
+                { trait: '技术达人', animal: '🐬' },
+                { trait: '案例大王', animal: '🐘' },
+                { trait: '思辨导师', animal: '🦊' },
+                { trait: '跨界玩家', animal: '🐙' }
             ];
 
-            const fullStyleMap = {};
-            [...batch1, ...batch2].forEach(s => { fullStyleMap[s.trait] = s; });
+            const fusionDescMap = {
+                '逻辑严密×技术达人': '你既有「逻辑严密」的底色，又带「技术达人」的光彩。严谨的思维框架遇上了数字化的翅膀，你或许会成长为一名能用技术精准落地教学设计的智慧课堂架构师。',
+                '逻辑严密×案例大王': '你既有「逻辑严密」的底色，又带「案例大王」的光彩。缜密的理论推演配上鲜活的故事储备，你或许会成长为一名能把复杂道理讲得深入浅出的课堂叙事者。',
+                '逻辑严密×思辨导师': '你既有「逻辑严密」的底色，又带「思辨导师」的光彩。严密的推理能力叠加上对批判性思维的引导，你或许会成长为一名让学生既敬又爱、思维火花四溅的课堂哲学家。',
+                '逻辑严密×跨界玩家': '你既有「逻辑严密」的底色，又带「跨界玩家」的光彩。清晰的逻辑主线串联起多学科的知识版图，你或许会成长为一名打破专业壁垒、让课堂无限延伸的知识策展人。',
+                '激情澎湃×技术达人': '你既有「激情澎湃」的底色，又带「技术达人」的光彩。感染全场的能量搭载上高效的技术工具，你或许会成长为一名能让在线课堂也热血沸腾的数字化激励大师。',
+                '激情澎湃×案例大王': '你既有「激情澎湃」的底色，又带「案例大王」的光彩。充沛的情感张力融入一个个精彩的故事，你或许会成长为一名用案例点燃学生梦想的课堂演说家。',
+                '激情澎湃×思辨导师': '你既有「激情澎湃」的底色，又带「思辨导师」的光彩。热情的表达力结合上对深度思考的引导，你或许会成长为一名能让学生既热血又沉静的课堂思想引领者。',
+                '激情澎湃×跨界玩家': '你既有「激情澎湃」的底色，又带「跨界玩家」的光彩。感染力十足的能量跨越学科的边界，你或许会成长为一名用热情串联万物、让学习变成一场探险的课堂冒险家。',
+                '幽默风趣×技术达人': '你既有「幽默风趣」的底色，又带「技术达人」的光彩。轻松诙谐的表达配上酷炫的技术玩法，你或许会成长为一名让学生在笑声中不知不觉掌握硬核知识的智慧课堂魔法师。',
+                '幽默风趣×案例大王': '你既有「幽默风趣」的底色，又带「案例大王」的光彩。段子手的基因加上故事大王的天赋，你或许会成长为一名能把每个商业案例都讲成脱口秀的课堂段子手。',
+                '幽默风趣×思辨导师': '你既有「幽默风趣」的底色，又带「思辨导师」的光彩。轻松的氛围里藏着思维的钩子，你或许会成长为一名让学生在哈哈大笑之后陷入深刻思考的课堂智者。',
+                '幽默风趣×跨界玩家': '你既有「幽默风趣」的底色，又带「跨界玩家」的光彩。好玩的灵魂撞上开阔的视野，你或许会成长为一名能把每一节课都变成创意工作坊的课堂游戏设计师。',
+                '温柔耐心×技术达人': '你既有「温柔耐心」的底色，又带「技术达人」的光彩。春风化雨的陪伴加上高效的技术赋能，你或许会成长为一名让每个学生都被看见、被支持的智慧型成长导师。',
+                '温柔耐心×案例大王': '你既有「温柔耐心」的底色，又带「案例大王」的光彩。细腻的共情力配上丰富的故事储备，你或许会成长为一名用真实案例抚慰学生焦虑、点亮前行之路的课堂陪伴者。',
+                '温柔耐心×思辨导师': '你既有「温柔耐心」的底色，又带「思辨导师」的光彩。耐心的倾听遇上理性的追问，你或许会成长为一名不急于给答案、却总能引导学生自己找到答案的课堂苏格拉底。',
+                '温柔耐心×跨界玩家': '你既有「温柔耐心」的底色，又带「跨界玩家」的光彩。包容的气场拥抱多元的知识，你或许会成长为一名让每个学生都能找到自己舒适区的全人教育探索者。'
+            };
 
+            // DOM 元素
             const styleGrid = document.getElementById('styleGrid');
             const generateBtn = document.getElementById('generateBtn');
             const countdownNumber = document.getElementById('countdownNumber');
@@ -387,9 +209,9 @@
             let timeLeft = 15;
             let isSelecting = true;
 
-            function renderBatch(batchData) {
+            function renderBatch(batch) {
                 styleGrid.innerHTML = '';
-                batchData.forEach(style => {
+                batch.forEach(style => {
                     const card = document.createElement('div');
                     card.className = 'style-card';
                     card.setAttribute('data-trait', style.trait);
@@ -400,8 +222,8 @@
             }
 
             function highlightSelectedCard(trait) {
-                document.querySelectorAll('.style-card').forEach(card => {
-                    card.classList.toggle('selected', card.getAttribute('data-trait') === trait);
+                document.querySelectorAll('.style-card').forEach(c => {
+                    c.classList.toggle('selected', c.getAttribute('data-trait') === trait);
                 });
             }
 
@@ -436,18 +258,15 @@
                 }
             }
 
-            function handleCardClick(style, cardElement) {
+            function handleCardClick(style) {
                 if (!isSelecting) return;
-                if (countdownTimer) {
-                    clearInterval(countdownTimer);
-                    countdownTimer = null;
-                }
+                if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
                 highlightSelectedCard(style.trait);
                 if (currentStage === 1) {
                     selectedBatch1 = style;
                     isSelecting = false;
                     setTimeout(() => advanceToStage2(), 500);
-                } else if (currentStage === 2) {
+                } else {
                     selectedBatch2 = style;
                     isSelecting = false;
                     setTimeout(() => showGenerateButton(), 500);
@@ -457,8 +276,7 @@
             function advanceToStage2() {
                 currentStage = 2;
                 isSelecting = true;
-                dot1.classList.remove('active');
-                dot1.classList.add('done');
+                dot1.classList.remove('active'); dot1.classList.add('done');
                 dot2.classList.add('active');
                 stageLabel.textContent = '第二阶段 · 再次选择你的特质';
                 bottomTip.textContent = '⏳ 请在倒计时结束前做出选择';
@@ -469,23 +287,17 @@
 
             function showGenerateButton() {
                 isSelecting = false;
-                if (countdownTimer) {
-                    clearInterval(countdownTimer);
-                    countdownTimer = null;
-                }
+                if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
                 countdownNumber.textContent = '✓';
                 countdownNumber.classList.remove('urgent');
                 bottomTip.textContent = '✨ 两次选择完成，点击下方按钮生成预判卡';
                 generateBtn.classList.remove('hidden');
-                dot2.classList.remove('active');
-                dot2.classList.add('done');
+                dot2.classList.remove('active'); dot2.classList.add('done');
                 stageLabel.textContent = '选择完成 · 即将揭晓';
             }
 
             function generateResult() {
                 if (!selectedBatch1 || !selectedBatch2) return;
-
-                // 🔥 修复核心：两个阶段的选择平等展示，用"×"连接
                 const fusionHTML = `
                     <div class="card-fusion-item">
                         <span class="card-fusion-emoji">${selectedBatch1.animal}</span>
@@ -498,21 +310,11 @@
                     </div>
                 `;
                 cardFusion.innerHTML = fusionHTML;
-
-                // 描述语融合两种特质
-                const fusedDesc = `你既有「${selectedBatch1.trait}」的底色，又带「${selectedBatch2.trait}」的光彩。${selectedBatch2.desc}`;
-                cardDesc.textContent = fusedDesc;
-
-                // 旅程记录
-                const journeyText = `第一阶段选择：${selectedBatch1.animal} ${selectedBatch1.trait}  →  第二阶段选择：${selectedBatch2.animal} ${selectedBatch2.trait}`;
-                cardJourney.textContent = journeyText;
-
+                const fusionKey = `${selectedBatch1.trait}×${selectedBatch2.trait}`;
+                cardDesc.textContent = fusionDescMap[fusionKey] || '两种特质在你身上交织，会生长出独一无二的教学风格。';
+                cardJourney.textContent = `第一阶段选择：${selectedBatch1.animal} ${selectedBatch1.trait}  →  第二阶段选择：${selectedBatch2.animal} ${selectedBatch2.trait}`;
                 cardNickname.textContent = '一位未来的好老师';
-                cardNickname.classList.remove('hidden');
-
-                document.querySelectorAll('#styleGrid, #generateBtn, #countdownArea, #stageLabel, #bottomTip').forEach(el => {
-                    if (el) el.style.display = 'none';
-                });
+                document.querySelectorAll('#styleGrid, #generateBtn, #countdownArea, #stageLabel, #bottomTip').forEach(el => { if(el) el.style.display = 'none'; });
                 document.getElementById('stageIndicator').style.display = 'none';
                 resultArea.style.display = 'block';
                 resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -532,34 +334,27 @@
                         useCORS: true,
                         logging: false,
                     });
+                    // 尝试自动下载
                     const link = document.createElement('a');
-                    const fileName = `教学风格罗盘_${selectedBatch1?.trait || ''}×${selectedBatch2?.trait || '预见'}.png`;
-                    link.download = fileName;
+                    link.download = `教学风格罗盘_${selectedBatch1?.trait || ''}×${selectedBatch2?.trait || '预见'}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                     saveBtn.textContent = '📸 保存图片';
                     saveBtn.disabled = false;
                 } catch (error) {
-                    alert('生成图片失败，请长按卡片截图保存。');
+                    alert('自动保存失败，请长按上方卡片截图保存。');
                     saveBtn.textContent = '📸 保存图片';
                     saveBtn.disabled = false;
                 }
             });
 
-            resetBtn.addEventListener('click', resetAll);
-
-            function resetAll() {
-                if (countdownTimer) {
-                    clearInterval(countdownTimer);
-                    countdownTimer = null;
-                }
+            resetBtn.addEventListener('click', () => {
+                if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
                 currentStage = 1;
-                selectedBatch1 = null;
-                selectedBatch2 = null;
+                selectedBatch1 = selectedBatch2 = null;
                 isSelecting = true;
                 timeLeft = 15;
-                dot1.classList.add('active');
-                dot1.classList.remove('done');
+                dot1.classList.add('active'); dot1.classList.remove('done');
                 dot2.classList.remove('active', 'done');
                 stageLabel.textContent = '第一阶段 · 选择你最心动的特质';
                 countdownNumber.textContent = '15';
@@ -567,22 +362,18 @@
                 bottomTip.textContent = '⏳ 请在倒计时结束前做出选择';
                 generateBtn.classList.add('hidden');
                 resultArea.style.display = 'none';
-                document.querySelectorAll('#styleGrid, #countdownArea, #stageLabel, #bottomTip').forEach(el => {
-                    if (el) el.style.display = '';
-                });
+                document.querySelectorAll('#styleGrid, #countdownArea, #stageLabel, #bottomTip').forEach(el => { if(el) el.style.display = ''; });
                 document.getElementById('stageIndicator').style.display = 'flex';
                 renderBatch(batch1);
                 startCountdown();
-            }
+            });
 
-            function init() {
-                renderBatch(batch1);
-                startCountdown();
-                generateBtn.classList.add('hidden');
-                resultArea.style.display = 'none';
-            }
-            init();
-        })();
+            // 启动
+            renderBatch(batch1);
+            startCountdown();
+            generateBtn.classList.add('hidden');
+            resultArea.style.display = 'none';
+        });
     </script>
 </body>
 </html>
